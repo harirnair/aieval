@@ -8,7 +8,7 @@ type ReportView = 'business' | 'technical' | 'all-tests';
 
 export default function StepReport() {
   const navigate = useNavigate();
-  const { completeStep } = useApp();
+  useApp();
   const [view, setView] = useState<ReportView>('business');
   const [testSearch, setTestSearch] = useState('');
   const [testFilter, setTestFilter] = useState<'all' | 'passed' | 'failed'>('all');

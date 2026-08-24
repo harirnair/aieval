@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { mockTestCases, mockTestSuites } from '../data/mockData';
+import { mockTestCases } from '../data/mockData';
 
 type TestCase = typeof mockTestCases[0];
 

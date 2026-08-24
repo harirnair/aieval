@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, type ReactNode } from 'react';
 
 // Evaluation pipeline steps
 export type StepId =
@@ -62,6 +62,7 @@ interface AppContextValue {
   currentPage: string;
   setCurrentPage: (p: string) => void;
   completedSteps: StepId[];
+  setCompletedSteps: (steps: StepId[]) => void;
   completeStep: (s: StepId) => void;
   activeStep: StepId;
   setActiveStep: (s: StepId) => void;
@@ -155,6 +156,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       currentPage,
       setCurrentPage,
       completedSteps,
+      setCompletedSteps,
       completeStep,
       activeStep,
       setActiveStep,

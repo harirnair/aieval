@@ -21,8 +21,6 @@ export default function Sidebar() {
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   const handleStepClick = (stepId: string) => {
-    const idx = EVAL_STEPS.findIndex(s => s.id === stepId);
-    const activeIdx = EVAL_STEPS.findIndex(s => s.id === activeStep);
     // Allow navigating to done steps or active step
     if (completedSteps.includes(stepId as any) || stepId === activeStep) {
       setActiveStep(stepId as any);
@@ -97,7 +95,7 @@ export default function Sidebar() {
           </div>
 
           <div className="sidebar-pipeline">
-            {EVAL_STEPS.map((step, i) => {
+            {EVAL_STEPS.map(step => {
               const status = getStepStatus(step.id, completedSteps, activeStep);
               const isClickable = completedSteps.includes(step.id) || step.id === activeStep;
 

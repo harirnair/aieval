@@ -121,7 +121,7 @@ export interface TestCaseDetail {
 export interface FailureItem {
   id: string;
   testId: string;
-  severity: 'Critical' | 'High' | 'Medium';
+  severity: 'Critical' | 'High' | 'Medium' | 'Low';
   businessImpact: string;
   detectedAt: string;
   likelyRootCause: string;
