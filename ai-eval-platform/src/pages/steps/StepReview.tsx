@@ -12,14 +12,15 @@ export default function StepReview() {
 
   const [selectedTcId, setSelectedTcId] = useState<string>('TC-1042');
   const [activeTab, setActiveTab] = useState<'script' | 'payload' | 'assertions' | 'graders'>('payload');
-  const [filterType, setFilterType] = useState<'all' | 'p1' | 'high' | 'failed'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'p1' | 'high' | 'synthetic' | 'db'>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [approved, setApproved] = useState(false);
 
   const filteredTests = allTests.filter(tc => {
     if (filterType === 'p1' && tc.priority !== 'P1') return false;
     if (filterType === 'high' && tc.risk !== 'High') return false;
-    if (filterType === 'failed' && tc.status !== 'failed') return false;
+    if (filterType === 'synthetic' && tc.dataSource !== 'Synthetic') return false;
+    if (filterType === 'db' && tc.dataSource === 'Synthetic') return false;
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       return tc.id.toLowerCase().includes(q) || tc.name.toLowerCase().includes(q) || tc.capability.toLowerCase().includes(q);
@@ -92,13 +93,14 @@ def test_${tc.id.replace('-', '_')}_${tc.scenario.split(':')[0].toLowerCase()}()
             <div>
               <div className="page-title">Review Generated Test Cases & Executable Scripts</div>
               <div className="page-subtitle">
-                Browsing all {allTests.length} generated evaluation test cases, pytest test harnesses, trace assertions, and grader rubrics.
+                Reviewing all {allTests.length} generated test specifications, pytest test harnesses, trace assertions, and grader rubrics before live execution.
               </div>
             </div>
             <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
               <div style={{ display: 'flex', gap: 12, fontSize: '11px', color: 'var(--text-muted)' }}>
-                <span style={{ color: 'var(--success)', fontWeight: 600 }}>✓ 384 High Confidence</span>
-                <span style={{ color: 'var(--error)', fontWeight: 600 }}>43 High Risk / Failure Edge Cases</span>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>427 Generated Tests</span>
+                <span style={{ color: 'var(--warning)', fontWeight: 600 }}>142 High Risk Scenarios</span>
+                <span style={{ color: 'var(--accent-text)', fontWeight: 600 }}>94 Edge Permutations</span>
               </div>
               {!approved ? (
                 <button className="btn btn-success btn-sm" onClick={() => setApproved(true)}>
@@ -115,7 +117,7 @@ def test_${tc.id.replace('-', '_')}_${tc.scenario.split(':')[0].toLowerCase()}()
           {/* Left: Test Case Explorer with Filter & Search */}
           <div style={{ minWidth: 0 }}>
             <div className="section-label" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>Test Cases ({filteredTests.length})</span>
+              <span>Generated Tests ({filteredTests.length})</span>
               <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Total: {allTests.length}</span>
             </div>
 
@@ -124,19 +126,20 @@ def test_${tc.id.replace('-', '_')}_${tc.scenario.split(':')[0].toLowerCase()}()
               <input
                 className="field-input text-mono"
                 style={{ padding: '6px 10px', fontSize: '11px' }}
-                placeholder="Filter by ID, applicant, rule..."
+                placeholder="Filter by ID, applicant, capability..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
               />
             </div>
 
-            {/* Filter Pills */}
+            {/* Filter Pills - Pre-Execution Categories */}
             <div style={{ display: 'flex', gap: 4, marginBottom: 8, flexWrap: 'wrap' }}>
               {[
                 { id: 'all', label: `All (${allTests.length})` },
-                { id: 'p1', label: 'P1' },
+                { id: 'p1', label: 'P1 Priority' },
                 { id: 'high', label: 'High Risk' },
-                { id: 'failed', label: 'Failed' },
+                { id: 'synthetic', label: 'Synthetic' },
+                { id: 'db', label: 'Database/CRM' },
               ].map(f => (
                 <button
                   key={f.id}
@@ -174,8 +177,8 @@ def test_${tc.id.replace('-', '_')}_${tc.scenario.split(':')[0].toLowerCase()}()
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)' }}>{tc.id}</span>
                     <div style={{ display: 'flex', gap: 4 }}>
                       <span className="badge badge-muted" style={{ fontSize: '9px', padding: '1px 5px' }}>{tc.priority}</span>
-                      <span className={`badge ${tc.risk === 'High' ? 'badge-error' : tc.risk === 'Medium' ? 'badge-warning' : 'badge-muted'}`} style={{ fontSize: '9px', padding: '1px 5px' }}>
-                        {tc.risk}
+                      <span className={`badge ${tc.risk === 'High' ? 'badge-warning' : tc.risk === 'Medium' ? 'badge-muted' : 'badge-muted'}`} style={{ fontSize: '9px', padding: '1px 5px' }}>
+                        {tc.risk} Risk
                       </span>
                     </div>
                   </div>
@@ -199,8 +202,8 @@ def test_${tc.id.replace('-', '_')}_${tc.scenario.split(':')[0].toLowerCase()}()
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2, flexWrap: 'wrap' }}>
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700, color: 'var(--accent-text)' }}>{selectedTc.id}</span>
                     <span className="badge badge-accent">{selectedTc.capability}</span>
-                    <span className={`badge ${selectedTc.risk === 'High' ? 'badge-error' : 'badge-warning'}`}>{selectedTc.risk} Risk</span>
-                    <span className="badge badge-muted">{selectedTc.priority}</span>
+                    <span className={`badge ${selectedTc.risk === 'High' ? 'badge-warning' : 'badge-muted'}`}>{selectedTc.risk} Risk</span>
+                    <span className="badge badge-muted">{selectedTc.priority} Priority</span>
                     <span className="badge badge-muted">Source: {selectedTc.dataSource}</span>
                   </div>
                   <div className="surface-title" style={{ wordBreak: 'break-word' }}>{selectedTc.name}</div>
@@ -239,7 +242,7 @@ def test_${tc.id.replace('-', '_')}_${tc.scenario.split(':')[0].toLowerCase()}()
                 <div style={{ padding: 'var(--sp-4)', minWidth: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                     <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                      POST /v1/loan-agent/evaluate-run · Data Source: <strong style={{ color: 'var(--text-primary)' }}>{selectedTc.dataSource}</strong>
+                      Target Endpoint: POST /v1/loan-agent/evaluate-run · Data Source: <strong style={{ color: 'var(--text-primary)' }}>{selectedTc.dataSource}</strong>
                     </span>
                     <button className="btn btn-ghost btn-sm" style={{ fontSize: '11px' }}>Copy JSON</button>
                   </div>
@@ -282,8 +285,8 @@ def test_${tc.id.replace('-', '_')}_${tc.scenario.split(':')[0].toLowerCase()}()
                       Mandated Decision: <span style={{ color: 'var(--accent-text)', fontFamily: 'var(--font-mono)' }}>{selectedTc.expectedOutcome.decision}</span>
                     </div>
                     {selectedTc.expectedOutcome.must_not_approve && (
-                      <div style={{ color: 'var(--error)', fontSize: '12px', fontWeight: 500, marginTop: 2 }}>
-                        ⛔ STRICT REQUIREMENT: Agent must NOT issue approval under these conditions.
+                      <div style={{ color: 'var(--warning)', fontSize: '12px', fontWeight: 500, marginTop: 2 }}>
+                        ⛔ ADVERSARIAL EDGE CASE: Agent must NOT issue approval under these conditions.
                       </div>
                     )}
                   </div>
