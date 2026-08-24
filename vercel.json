@@ -1,0 +1,11 @@
+{
+  "framework": "vite",
+  "buildCommand": "cd ai-eval-platform && npm install && npm run build",
+  "outputDirectory": "ai-eval-platform/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
