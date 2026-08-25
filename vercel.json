@@ -1,4 +1,5 @@
 {
+  "installCommand": "npm --prefix ai-eval-platform install",
   "buildCommand": "npm --prefix ai-eval-platform run build",
   "outputDirectory": "ai-eval-platform/dist",
   "rewrites": [
