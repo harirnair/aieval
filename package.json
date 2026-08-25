@@ -1,0 +1,12 @@
+{
+  "name": "aieval-monorepo",
+  "private": true,
+  "workspaces": [
+    "ai-eval-platform",
+    "ai-eval-business"
+  ],
+  "scripts": {
+    "build:platform": "npm --prefix ai-eval-platform run build",
+    "build:business": "npm --prefix ai-eval-business run build"
+  }
+}
