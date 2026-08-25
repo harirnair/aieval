@@ -1,0 +1,10 @@
+{
+  "buildCommand": "npm --prefix ai-eval-platform run build",
+  "outputDirectory": "ai-eval-platform/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
